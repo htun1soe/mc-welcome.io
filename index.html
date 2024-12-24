@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechatronics Welcome Party</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            background: radial-gradient(circle at 50% 50%, #001d3d, #000428, #000);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        #nebula {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150vw;
+            height: 150vh;
+            background: radial-gradient(circle, rgba(173, 216, 230, 0.3), rgba(72, 61, 139, 0.1), transparent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: swirl 20s infinite linear;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .invitation-heading {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: #00bfff;
+            z-index: 3;
+            position: relative;
+            text-shadow: 0 0 15px #ff00ff, 0 0 25px #00ffff;
+        }
+
+        .event-info {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+        }
+
+        .event-info p {
+            margin: 5px 0;
+        }
+
+        .floating-text {
+            font-family: 'Press Start 2P', cursive;
+            position: absolute;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+            animation: moveText 4s forwards ease-out, fadeIn 2s forwards ease-out;
+            z-index: 2;
+            letter-spacing: 0.1em;
+            font-style: italic;
+            opacity: 0;
+        }
+
+        .floating-text:nth-child(even) {
+            animation-delay: 1s;
+        }
+
+        @keyframes moveText {
+            0% {
+                transform: translate(-500px, 500px);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(var(--x), var(--y));
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .invitation-heading {
+                font-size: 1rem;
+                letter-spacing: 0.05em;
+                padding-right: 5px;
+            }
+
+            .event-info {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .invitation-heading {
+                font-size: 1rem;
+                letter-spacing: 0.05em;
+            }
+
+            .event-info {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="nebula"></div>
+    <canvas id="space-canvas"></canvas>
+
+    <div class="invitation-heading"> You have been invited </div>
+    <br>
+    <div class="invitation-heading"> to MC Welcome Party</div>
+
+    <div class="event-info">
+        <p><strong>Venue:</strong> T4</p>
+        <br>
+        <p><strong>Date:</strong> 8.1.25</p>
+    </div>
+
+    <div class="floating-text" style="--x: 0vw; --y: -250px;">🚀 Robotics</div>
+    <div class="floating-text" style="--x: 170px; --y: -173px;">🤖 Automation</div>
+    <div class="floating-text" style="--x: 200px; --y: 0;">🔧 Control <br>Systems</div>
+    <div class="floating-text" style="--x: 170px; --y: 173px;">⚙️ Sensors & <br> Actuators</div>
+    <div class="floating-text" style="--x: 0; --y: 250px;">🔩 🧠 Artificial <br> Intelligence</div>
+    <div class="floating-text" style="--x: -200px; --y: 173px;">🖥️ Embedded <br> Systems</div>
+    <div class="floating-text" style="--x: -220px; --y: 0;">🤖 Machine <br> Learning</div>
+    <div class="floating-text" style="--x: -200px; --y: -173px;">🔩 Mechatronic <br> Design</div>
+
+    <script>
+        const canvas = document.getElementById("space-canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let stars = [];
+        const numStars = 300;
+
+        function createStars() {
+            stars = [];
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 1,
+                    color: `rgba(${Math.random() * 255},${Math.random() * 255},255,${Math.random()})`,
+                    twinkleSpeed: Math.random() * 0.1 + 0.02
+                });
+            }
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach((star) => {
+                const opacity = Math.abs(Math.sin(Date.now() * star.twinkleSpeed));
+                ctx.fillStyle = star.color.replace(/0\.\d+\)$/, `${opacity})`);
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animateStars);
+        }
+
+        function createShootingStars() {
+            const shootingStars = [];
+            for (let i = 0; i < 5; i++) {
+                shootingStars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    length: Math.random() * 80 + 50,
+                    speed: Math.random() * 10 + 5,
+                    opacity: Math.random(),
+                    angle: Math.random() * Math.PI / 4
+                });
+            }
+
+            function animateShootingStars() {
+                shootingStars.forEach((star, index) => {
+                    ctx.beginPath();
+                    ctx.moveTo(star.x, star.y);
+                    ctx.lineTo(
+                        star.x - Math.cos(star.angle) * star.length,
+                        star.y - Math.sin(star.angle) * star.length
+                    );
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    star.x += star.speed * Math.cos(star.angle);
+                    star.y += star.speed * Math.sin(star.angle);
+
+                    if (star.x < 0 || star.y < 0 || star.x > canvas.width || star.y > canvas.height) {
+                        shootingStars[index] = {
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            length: Math.random() * 80 + 50,
+                            speed: Math.random() * 10 + 5,
+                            opacity: Math.random(),
+                            angle: Math.random() * Math.PI / 4
+                        };
+                    }
+                });
+
+                requestAnimationFrame(animateShootingStars);
+            }
+
+            animateShootingStars();
+        }
+
+        function drawNebula() {
+            const nebulaColors = [
+                "rgba(255, 69, 0, 0.05)",
+                "rgba(173, 216, 230, 0.1)",
+                "rgba(72, 61, 139, 0.07)"
+            ];
+
+            nebulaColors.forEach((color) => {
+                for (let i = 0; i < 50; i++) {
+                    ctx.beginPath();
+                    ctx.arc(
+                        Math.random() * canvas.width,
+                        Math.random() * canvas.height,
+                        Math.random() * 300 + 50,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                }
+            });
+        }
+
+        createStars();
+        drawNebula();
+        animateStars();
+        createShootingStars();
+    </script>
+
+</body>
+</html>
